@@ -8,14 +8,16 @@ export default {
     data() {
         return {
             searchResultArr: [],
-            emitIndex: null
+            // emitIndex: null,
+            // getIndex:null
+         
 
 
         }
     },
     methods: {
         getProductInfo() {
-
+           
 
             let body = {
                 "name": this.searchData
@@ -38,58 +40,13 @@ export default {
 
                     console.log(data);
                     this.searchResultArr = data.product_list;
+                    
                     console.log(this.searchResultArr);
 
 
                 })
         },
-        getfunction(searchResultcode){
-           this.emitIndex=searchResultcode;
-           this.setShoppingList();
-           
-        },
-        setShoppingList(index) {
-
-            let body = {
-                "product": this.searchResultArr[index].hs_code,
-                "buyerAccount":"A312" //需要localstorage
-            }
-
-            fetch("http://localhost:8080/add_shopping_car", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body)
-            })
-                .then(response => {
-                    //vue不能用fetch+function 要用箭頭
-                    //從JSON格式轉回Js物件
-                    return response.json()
-                })
-                .then(data => {
-
-
-                    console.log(data);
-                    this.searchResultArr = data;
-                    alert(data.msg);
-                    console.log(this.searchResultArr);
-
-
-                })
-              
-                setTimeout(() => {
-                    this.refresh();
-                }, 2000);
-
-                
-        },
-        refresh(){
-            history.go(0);
-
-        }
-        
-        
+     
     },
     // 生命週期}
     mounted() {
@@ -108,13 +65,16 @@ export default {
 <template>
     <div class="search-area">
         <div class="searchbar">
-            <!-- {{ searchData }} -->
-            {{ this.emitIndex }}
+           
             <label for="searchBar">商品搜尋</label>
             <input class="searchBar" type="text" name="" id="searchBar" placeholder="請關鍵字搜尋產品名稱或是空白搜尋，回傳全部資料"
                 v-model="searchData">
             <button type="button" class="searchReqBtn" @click="getProductInfo">
                 <i class="fa-solid fa-magnifying-glass">搜尋</i>
+            </button>
+            <button type="button" class="searchReqBtn" @click="">
+                <i class="fa-solid fa-pen-to-square">編輯購物車</i>
+                
             </button>
         </div>
 
@@ -123,14 +83,21 @@ export default {
     </div>
 
     <div class="background-layout">
+      
         <layoutCardView v-for="(item, index) in searchResultArr" 
             v-bind:searchResultcode="item.hs_code"
-            v-bind:selleraccount="item.seller_account" v-bind:date="item.date" v-bind:description="item.description"
+            v-bind:selleraccount="item.seller_account" 
+            v-bind:date="item.date" 
+            v-bind:description="item.description"
             v-bind:name="item.name" v-bind:number="item.number" v-bind:place="item.place" v-bind:price="item.price"
-            v-bind:type="item.type" @click="setShoppingList(index)" />
-          
-        
+            v-bind:type="item.type" 
 
+           
+         
+              />
+              <!-- @click="setShoppingList()" -->  
+            
+          
         
     </div>
 </template>
@@ -171,7 +138,7 @@ export default {
 
 label {
 
-    margin-right: 30px;
+    // margin-right: 30px;
 }
 
 input {
@@ -179,7 +146,7 @@ input {
     border: none;
     width: 50vw;
     height: 2vw;
-    margin-right: 10px;
+    // margin-right: 50px;
 }
 
 .searchReqBtn {

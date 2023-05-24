@@ -7,7 +7,7 @@ export default {
     },
     data() {
         return {
-          
+            searchResult:null
     }},
     props: [
         "searchResultcode",
@@ -22,11 +22,36 @@ export default {
         
     ],
     methods: {
-        push() {
-        //  console.log(this.searchResultcode);
-         this.$emit("emitPush",this.searchResultcode)
-        },
         
+        tryAdd(){
+            this.searchResult= this.searchResultcode;
+            let body = {
+                "product":this.searchResult,
+                "buyerAccount":"A325" //需要localstorage
+            }
+            fetch("http://localhost:8080/add_shopping_car", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    //vue不能用fetch+function 要用箭頭
+                    //從JSON格式轉回Js物件
+                    return response.json()
+                })
+                .then(data => {
+
+
+                    console.log(data);
+                    this.searchResultArr = data;
+                    alert(data.msg);
+                    console.log(this.searchResultArr);
+
+
+                })
+        }
         
         
     },
@@ -49,7 +74,7 @@ export default {
 <div class="explainAndBtn">
     <img src="../assets/img/sweet-potato-600x400.jpg" alt="">
      <div class="explain">
-        <p>編號: {{ searchResultcode }}</p>
+        <p >編號: {{ searchResultcode }}</p>
         <p>產品分類: {{type}} </p>
         <p>產品敘述: {{description}} </p>
         <p>產品名稱: {{name}} </p>
@@ -61,7 +86,7 @@ export default {
        
      </div>
 
-    <button type="button" class="addCartBTN" @click="push">
+    <button type="button" class="addCartBTN" @click="tryAdd()"  >
     <i class="fa-solid fa-basket-shopping">加入購物車</i>
     </button>
 </div>
